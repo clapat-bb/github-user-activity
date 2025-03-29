@@ -14,22 +14,57 @@
 #include <vector>
 
 void from_json(const nlohmann::json &j, Repo &r) {
-  j.at("name").get_to(r.name);
+  if (!j.at("name").is_null()) {
+    j.at("name").get_to(r.name);
+  } else {
+    r.name = "N/A";
+  }
 }
 
 void from_json(const nlohmann::json &j, GithubActivity &a) {
-  j.at("type").get_to(a.type);
-  j.at("repo").get_to(a.repo);
-  j.at("created_at").get_to(a.creatAt);
-  j.at("payload").at("action").get_to(a.payload.action);
-  j.at("payload").at("ref").get_to(a.payload.ref);
-  j.at("payload").at("ref_type").get_to(a.payload.refType);
+  if (!j.at("type").is_null()) {
+    j.at("type").get_to(a.type);
+  } else {
+    a.type = "N/A";
+  }
+
+  from_json(j.at("repo"), a.repo);
+
+  if (!j.at("created_at").is_null()) {
+    j.at("created_at").get_to(a.createdAt);
+  } else {
+    a.createdAt = "N/A";
+  }
+
+  if (j.at("payload").contains("action") &&
+      !j.at("payload").at("action").is_null()) {
+    j.at("payload").at("action").get_to(a.payload.action);
+  } else {
+    a.payload.action = "N/A";
+  }
+
+  if (j.at("payload").contains("ref") && !j.at("payload").at("ref").is_null()) {
+    j.at("payload").at("ref").get_to(a.payload.ref);
+  } else {
+    a.payload.ref = "N/A";
+  }
+
+  if (j.at("payload").contains("ref_type") &&
+      !j.at("payload").at("ref_type").is_null()) {
+    j.at("payload").at("ref_type").get_to(a.payload.refType);
+  } else {
+    a.payload.refType = "N/A";
+  }
 
   if (j.at("payload").contains("commits") &&
       j.at("payload")["commits"].is_array()) {
     for (const auto &commit_json : j.at("payload")["commits"]) {
       Commit commit;
-      commit_json.at("message").get_to(commit.message);
+      if (!commit_json.at("message").is_null()) {
+        commit_json.at("message").get_to(commit.message);
+      } else {
+        commit.message = "N/A";
+      }
       a.payload.commits.push_back(commit);
     }
   }

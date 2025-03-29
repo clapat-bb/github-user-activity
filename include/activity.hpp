@@ -15,7 +15,7 @@ struct Commit {
 struct GithubActivity {
   std::string type;
   Repo repo;
-  std::string creatAt;
+  std::string createdAt;
   struct {
     std::string action;
     std::string ref;
