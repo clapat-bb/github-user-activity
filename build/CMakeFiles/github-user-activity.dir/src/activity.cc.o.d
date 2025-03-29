@@ -274,4 +274,5 @@ CMakeFiles/github-user-activity.dir/src/activity.cc.o: \
  /usr/local/include/curl/urlapi.h /usr/local/include/curl/options.h \
  /usr/local/include/curl/header.h /usr/local/include/curl/websockets.h \
  /usr/local/include/curl/mprintf.h /usr/local/include/curl/easy.h \
- /usr/include/c++/13/iostream /usr/include/c++/13/stdatomic.h
+ /usr/local/include/curl/urlapi.h /usr/include/c++/13/iostream \
+ /usr/include/c++/13/stdatomic.h

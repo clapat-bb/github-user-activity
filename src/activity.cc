@@ -3,6 +3,7 @@
 #include <cstddef>
 #include <curl/curl.h>
 #include <curl/easy.h>
+#include <curl/urlapi.h>
 #include <iostream>
 #include <iterator>
 #include <json.hpp>
@@ -19,7 +20,7 @@ void from_json(const nlohmann::json &j, Repo &r) {
 void from_json(const nlohmann::json &j, GithubActivity &a) {
   j.at("type").get_to(a.type);
   j.at("repo").get_to(a.repo);
-  j.at("create_at").get_to(a.creatAt);
+  j.at("created_at").get_to(a.creatAt);
   j.at("payload").at("action").get_to(a.payload.action);
   j.at("payload").at("ref").get_to(a.payload.ref);
   j.at("payload").at("ref_type").get_to(a.payload.refType);
@@ -49,6 +50,7 @@ std::vector<GithubActivity> fetchGithubActivity(const std::string &username) {
   CURL *curl;
   CURLcode res;
   std::string readBuffer;
+  long http_code = 0;
 
   curl = curl_easy_init();
   if (curl) {
@@ -56,13 +58,27 @@ std::vector<GithubActivity> fetchGithubActivity(const std::string &username) {
     curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallBack);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+
+    // update;
+    struct curl_slist *headers = NULL;
+    headers = curl_slist_append(headers, "User-Agent: MyGitHubActivityApp");
+    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+
     res = curl_easy_perform(curl);
+    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &http_code);
     curl_easy_cleanup(curl);
+    curl_slist_free_all(headers);
 
     if (res != CURLE_OK) {
       throw std::runtime_error("curl_easy_perform() failed: " +
                                std::string(curl_easy_strerror(res)));
     }
+
+    if (http_code != 200) {
+      throw std::runtime_error("HTTP request failled with status code: " +
+                               std::to_string(http_code));
+    }
+
     nlohmann::json jsonData = nlohmann::json::parse(readBuffer);
     return jsonData.get<std::vector<GithubActivity>>();
   }
