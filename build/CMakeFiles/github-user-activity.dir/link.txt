@@ -1,0 +1,1 @@
+/usr/bin/c++ "CMakeFiles/github-user-activity.dir/src/main.cc.o" "CMakeFiles/github-user-activity.dir/src/activity.cc.o" -o github-user-activity  -Wl,-rpath,/usr/local/lib /usr/local/lib/libcurl.so 

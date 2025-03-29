@@ -1,0 +1,3 @@
+/home/klapat/cpp/ITERM/github-user-activity/build/CMakeFiles/github-user-activity.dir
+/home/klapat/cpp/ITERM/github-user-activity/build/CMakeFiles/edit_cache.dir
+/home/klapat/cpp/ITERM/github-user-activity/build/CMakeFiles/rebuild_cache.dir
